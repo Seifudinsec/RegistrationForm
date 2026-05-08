@@ -1,9 +1,36 @@
+<?php
+// ── ALL PHP LOGIC FIRST (before any HTML output) ─────────────────
+$conn = mysqli_connect("localhost", "root", "", "userdetailsDB");
+
+$successMsg = "";
+$errorMsg   = "";
+
+if (isset($_POST['save'])) {
+    $firstName = $_POST['fname'];
+    $lastName  = $_POST['lname'];
+    $UserName  = $_POST['uname'];
+    $email     = $_POST['email'];
+    $password  = md5($_POST['pword']);
+
+    $addUser = "INSERT INTO userstable(firstname, lastname, username, email, password)
+                VALUES ('$firstName', '$lastName', '$UserName', '$email', '$password')";
+
+    $run = mysqli_query($conn, $addUser);
+
+    if ($run) {
+        header("Location: view.php");
+        exit();
+    } else {
+        $errorMsg = "Error: " . mysqli_error($conn);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register</title>
+  <title>Add User</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +45,6 @@
       --muted: #6b7a99;
       --input-bg: #0d1526;
       --error: #ff4d6d;
-      --success: #00e5a0;
     }
 
     body {
@@ -33,7 +59,6 @@
       position: relative;
     }
 
-    /* Animated background blobs */
     body::before, body::after {
       content: '';
       position: fixed;
@@ -84,7 +109,7 @@
     }
     .brand h1 {
       font-family: 'Syne', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
@@ -92,6 +117,19 @@
       color: var(--muted);
       font-size: 14px;
       margin-top: 4px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      border-left: 3px solid;
+    }
+    .alert-error {
+      background: rgba(255,77,109,0.08);
+      border-color: var(--error);
+      color: var(--error);
     }
 
     .card {
@@ -125,9 +163,7 @@
       color: var(--muted);
     }
 
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
     .input-wrap svg {
       position: absolute;
       left: 14px;
@@ -156,10 +192,6 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
     }
-    input:focus + svg, .input-wrap:has(input:focus) svg { color: var(--accent); }
-
-    /* Fix: icon is before input in DOM so use sibling trick differently */
-    .input-wrap input:focus ~ svg { color: var(--accent); }
 
     .divider {
       height: 1px;
@@ -167,63 +199,38 @@
       margin: 22px 0;
     }
 
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: opacity 0.2s, transform 0.15s;
+    .btn-row {
+      display: flex;
+      gap: 12px;
       margin-top: 24px;
     }
-    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-    .btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.12));
-    }
 
-    .login-link {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--muted);
-      animation: fadeUp 0.6s ease 0.25s both;
-    }
-    .login-link a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .login-link a:hover { text-decoration: underline; }
-
-    /* PHP feedback messages */
-    .alert {
-      padding: 12px 16px;
+    .btn {
+      padding: 14px;
       border-radius: 10px;
+      font-family: 'Syne', sans-serif;
       font-size: 14px;
-      margin-bottom: 20px;
-      border-left: 3px solid;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s, transform 0.15s;
+      border: none;
     }
-    .alert-success {
-      background: rgba(0,229,160,0.08);
-      border-color: var(--success);
-      color: var(--success);
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-cancel {
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 14px 20px;
     }
-    .alert-error {
-      background: rgba(255,77,109,0.08);
-      border-color: var(--error);
-      color: var(--error);
+    .btn-save {
+      flex: 1;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff;
     }
 
     @keyframes fadeDown {
@@ -234,15 +241,6 @@
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
-    button .back {
-        width: 50px;
-        height: 30px;
-    }
-
-    button .back:hover {
-        background: grey;
-    }
   </style>
 </head>
 <body>
@@ -250,20 +248,14 @@
 <div class="wrapper">
 
   <div class="brand">
-    <div class="brand-icon">✦</div>
-    <h1>Create Account</h1>
-    <p>Fill in the details below to get started</p>
+    <div class="brand-icon">👤</div>
+    <h1>Add New User</h1>
+    <p>Fill in the details to add a new record</p>
   </div>
 
-  <?php
-    // Display success/error messages after form submission
-    if (isset($successMsg)) {
-      echo "<div class='alert alert-success'>$successMsg</div>";
-    }
-    if (isset($errorMsg)) {
-      echo "<div class='alert alert-error'>$errorMsg</div>";
-    }
-  ?>
+  <?php if ($errorMsg): ?>
+    <div class="alert alert-error"><?php echo $errorMsg; ?></div>
+  <?php endif; ?>
 
   <div class="card">
     <form method="POST" action="">
@@ -312,45 +304,15 @@
         </div>
       </div>
 
-      <button type="submit" name="save" class="btn">Create Account →</button>
+      <div class="btn-row">
+        <a href="view.php" class="btn btn-cancel">← Back</a>
+        <button type="submit" name="save" class="btn btn-save">＋ Add User</button>
+      </div>
 
     </form>
   </div>
 
-  <p class="login-link">Already have an account? <a href="login.php">Sign in</a></p>
-
 </div>
-
-<?php
-// Database connection
-$conn = mysqli_connect("localhost", "root", "", "userdetailsDB");
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-
-if (isset($_POST['save'])) {
-    $firstName  = $_POST['fname'];
-    $lastName   = $_POST['lname'];
-    $UserName   = $_POST['uname'];
-    $email      = $_POST['email'];
-    $password   = md5($_POST['pword']);
-
-    $addUser = "INSERT INTO userstable(firstname, lastname, username, email, password)
-                VALUES ('$firstName', '$lastName', '$UserName', '$email', '$password')";
-
-    $run = mysqli_query($conn, $addUser);
-
-    if ($run) {
-        $successMsg = "Account created successfully!";
-    } else {
-        $errorMsg = "Error: " . mysqli_error($conn);
-    }
-}
-?>
-
-
 
 </body>
 </html>
