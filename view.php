@@ -56,16 +56,19 @@
       z-index: 1;
     }
 
+    /* ── Header ── */
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
       animation: fadeDown 0.5s ease both;
     }
     .header-left h1 {
       font-family: 'Syne', sans-serif;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
@@ -77,21 +80,34 @@
     .btn-add {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
+      gap: 6px;
+      padding: 10px 18px;
       background: linear-gradient(135deg, var(--accent2), var(--accent));
-      border: none;
       border-radius: 10px;
       color: #fff;
       font-family: 'Syne', sans-serif;
       font-size: 13px;
       font-weight: 700;
-      cursor: pointer;
       text-decoration: none;
+      white-space: nowrap;
       transition: opacity 0.2s, transform 0.15s;
     }
     .btn-add:hover { opacity: 0.88; transform: translateY(-1px); }
 
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(0,229,255,0.08);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Desktop Table ── */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -101,20 +117,31 @@
       animation: fadeUp 0.5s ease 0.1s both;
     }
 
-    table { width: 100%; border-collapse: collapse; }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* prevents table from squishing too small */
+    }
 
     thead tr {
       background: rgba(255,255,255,0.03);
       border-bottom: 1px solid var(--border);
     }
     thead th {
-      padding: 14px 18px;
+      padding: 14px 16px;
       text-align: left;
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     tbody tr {
@@ -125,7 +152,7 @@
     tbody tr:hover { background: rgba(255,255,255,0.02); }
 
     tbody td {
-      padding: 14px 18px;
+      padding: 13px 16px;
       font-size: 14px;
       color: var(--text);
       vertical-align: middle;
@@ -150,17 +177,18 @@
       letter-spacing: 2px;
     }
 
-    .actions { display: flex; gap: 8px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .btn-edit, .btn-delete {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       padding: 6px 12px;
       border-radius: 7px;
       font-size: 12px;
       font-weight: 500;
       text-decoration: none;
+      white-space: nowrap;
       transition: opacity 0.2s, transform 0.15s;
       font-family: 'DM Sans', sans-serif;
     }
@@ -176,6 +204,66 @@
     }
     .btn-edit:hover, .btn-delete:hover { opacity: 0.75; transform: translateY(-1px); }
 
+    /* ── Mobile Cards (hidden on desktop) ── */
+    .mobile-cards { display: none; }
+
+    .user-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .user-card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .user-card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .user-card-field .field-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .user-card-field .field-value {
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .user-card-actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .user-card-actions .btn-edit,
+    .user-card-actions .btn-delete {
+      flex: 1;
+      justify-content: center;
+      padding: 9px;
+      font-size: 13px;
+    }
+
+    /* ── Empty state ── */
     .empty {
       text-align: center;
       padding: 60px 20px;
@@ -184,17 +272,19 @@
     .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty p { font-size: 14px; }
 
-    .count-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 10px;
-      border-radius: 20px;
-      background: rgba(0,229,255,0.08);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 600;
-      margin-left: 10px;
-      vertical-align: middle;
+    /* ── Responsive breakpoints ── */
+    @media (max-width: 640px) {
+      body { padding: 24px 16px; }
+
+      .header-left h1 { font-size: 20px; }
+
+      /* Hide desktop table, show mobile cards */
+      .card { display: none; }
+      .mobile-cards { display: block; }
+    }
+
+    @media (max-width: 400px) {
+      .user-card-body { grid-template-columns: 1fr; }
     }
 
     @keyframes fadeDown {
@@ -211,70 +301,107 @@
 
 <?php
   $conn = mysqli_connect("localhost", "root", "", "userdetailsDB");
+  $allUsers = "SELECT * FROM userstable";
+  $run = mysqli_query($conn, $allUsers);
+  $count = mysqli_num_rows($run);
 ?>
 
 <div class="wrapper">
 
+  <!-- Header -->
   <div class="header">
     <div class="header-left">
-      <h1>Users
-        <?php
-          $count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM userstable"));
-          echo "<span class='count-badge'>$count</span>";
-        ?>
-      </h1>
+      <h1>Users <span class="count-badge"><?php echo $count; ?></span></h1>
       <p>All registered accounts in the system</p>
     </div>
     <a href="index.php" class="btn-add">＋ Add User</a>
   </div>
 
-  <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Password</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php
-          $allUsers = "SELECT * FROM userstable";
-          $run = mysqli_query($conn, $allUsers);
+  <?php if ($count > 0):
+    // Re-run query since we used num_rows above
+    $run = mysqli_query($conn, $allUsers);
+    $rows = [];
+    while ($row = mysqli_fetch_array($run)) {
+      $rows[] = $row;
+    }
+  ?>
 
-          if (mysqli_num_rows($run) > 0) {
-            while ($row = mysqli_fetch_array($run)) {
-              echo "<tr>";
-              echo "<td><span class='id-badge'>" . $row['id'] . "</span></td>";
-              echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
-              echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
-              echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-              echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-              echo "<td><span class='pass-mask'>••••••••</span></td>";
-              echo "<td>
-                      <div class='actions'>
-                        <a href='edit.php?id=" . $row['id'] . "' class='btn-edit'>✎ Edit</a>
-                        <a href='delete.php?id=" . $row['id'] . "' class='btn-delete' onclick=\"return confirm('Delete this user?')\">✕ Delete</a>
-                      </div>
-                    </td>";
-              echo "</tr>";
-            }
-          } else {
-            echo "<tr><td colspan='7'>
-                    <div class='empty'>
-                      <div class='empty-icon'>👤</div>
-                      <p>No users found. Add one to get started.</p>
-                    </div>
-                  </td></tr>";
-          }
-        ?>
-      </tbody>
-    </table>
+  <!-- Desktop Table -->
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($rows as $row): ?>
+          <tr>
+            <td><span class="id-badge"><?php echo $row['id']; ?></span></td>
+            <td><?php echo htmlspecialchars($row['firstname']); ?></td>
+            <td><?php echo htmlspecialchars($row['lastname']); ?></td>
+            <td><?php echo htmlspecialchars($row['username']); ?></td>
+            <td><?php echo htmlspecialchars($row['email']); ?></td>
+            <td><span class="pass-mask">••••••••</span></td>
+            <td>
+              <div class="actions">
+                <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit">✎ Edit</a>
+                <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete" onclick="return confirm('Delete this user?')">✕ Delete</a>
+              </div>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- Mobile Cards -->
+  <div class="mobile-cards">
+    <?php foreach ($rows as $row): ?>
+    <div class="user-card">
+      <div class="user-card-header">
+        <div class="user-card-name"><?php echo htmlspecialchars($row['firstname'] . ' ' . $row['lastname']); ?></div>
+        <span class="id-badge"><?php echo $row['id']; ?></span>
+      </div>
+      <div class="user-card-body">
+        <div class="user-card-field">
+          <div class="field-label">Username</div>
+          <div class="field-value"><?php echo htmlspecialchars($row['username']); ?></div>
+        </div>
+        <div class="user-card-field">
+          <div class="field-label">Password</div>
+          <div class="field-value"><span class="pass-mask">••••••••</span></div>
+        </div>
+        <div class="user-card-field" style="grid-column: 1 / -1;">
+          <div class="field-label">Email</div>
+          <div class="field-value"><?php echo htmlspecialchars($row['email']); ?></div>
+        </div>
+      </div>
+      <div class="user-card-actions">
+        <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit">✎ Edit</a>
+        <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete" onclick="return confirm('Delete this user?')">✕ Delete</a>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+
+  <?php else: ?>
+  <!-- Empty state -->
+  <div class="card">
+    <div class="empty">
+      <div class="empty-icon">👤</div>
+      <p>No users found. Add one to get started.</p>
+    </div>
+  </div>
+  <?php endif; ?>
 
 </div>
 

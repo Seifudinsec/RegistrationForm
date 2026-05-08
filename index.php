@@ -1,5 +1,4 @@
 <?php
-// ── ALL PHP LOGIC FIRST (before any HTML output) ─────────────────
 $conn = mysqli_connect("localhost", "root", "", "userdetailsDB");
 
 $successMsg = "";
